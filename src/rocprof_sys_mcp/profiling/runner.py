@@ -102,8 +102,7 @@ class ProfilingRunner:
 
     def _find_rocprof_sys_run(self) -> Optional[str]:
         """Find rocprof-sys-run executable."""
-        executable = "/home/amd/work/rocm-systems/projects/rocprofiler-systems/build/debug/bin/rocprof-sys-run"
-        #executable = shutil.which("rocprof-sys-run")
+        executable = shutil.which("rocprof-sys-run")
         if executable:
             return executable
         rocm_path = os.environ.get("ROCM_PATH", "/opt/rocm")

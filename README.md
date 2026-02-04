@@ -30,12 +30,21 @@ Add to your MCP client configuration:
 {
   "mcpServers": {
     "rocprof-sys": {
-      "command": "python",
-      "args": ["-m", "rocprof_sys_mcp"]
+      "command": "<path_to_venv>/bin/python",
+      "args": ["-m", "rocprof_sys_mcp"],
+      "cwd": "<mcp_server_directory>"
     }
   }
 }
 ```
+
+Or add it automatically with running:
+
+```shell
+./scripts/install.sh [<path_to_claude_config_file>]
+```
+
+This script will handle all the required dependencies and will update the Claude Code JSON configuration file.
 
 ## Available Tools
 
@@ -62,18 +71,27 @@ Add to your MCP client configuration:
 ## Example Workflow
 
 1. Profile an application:
+
    ```
+
    profile_application(command="./my_app", args=["--input", "data.bin"])
+
    ```
 
 2. Query the trace:
+
    ```
+
    query_trace(sql="SELECT name, dur FROM slice ORDER BY dur DESC LIMIT 10")
+
    ```
 
 3. Generate a report:
+
    ```
+
    generate_report(format="markdown")
+
    ```
 
 ## License
