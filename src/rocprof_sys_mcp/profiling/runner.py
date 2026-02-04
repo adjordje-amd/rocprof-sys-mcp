@@ -88,6 +88,7 @@ class ProfilingConfig:
 
     # Environment and execution
     env_vars: dict[str, str] = field(default_factory=dict)
+    source_env: Optional[str] = None  # Path to environment file to source (e.g., setup.sh)
     timeout_seconds: Optional[float] = None
 
 
@@ -245,9 +246,23 @@ class ProfilingRunner:
         logger.info(f"Running profiling: {' '.join(cmd)}")
         logger.info(f"Output directory: {output_dir}")
 
+        # If source_env is specified, wrap the command in a shell script
+        if config.source_env:
+            # Create a wrapper script that sources the environment and runs the command
+            import shlex
+
+            cmd_str = " ".join(shlex.quote(arg) for arg in cmd)
+            shell_script = f"source {shlex.quote(config.source_env)} && {cmd_str}"
+
+            logger.info(f"Sourcing environment from: {config.source_env}")
+
+            process_cmd = ["/bin/bash", "-c", shell_script]
+        else:
+            process_cmd = cmd
+
         try:
             process = await asyncio.create_subprocess_exec(
-                *cmd,
+                *process_cmd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
                 cwd=working_dir,

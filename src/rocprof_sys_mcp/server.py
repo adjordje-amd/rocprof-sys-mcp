@@ -140,6 +140,12 @@ async def profile_application(
     config_file: Annotated[
         Optional[str], Field(description="Path to rocprof-sys configuration file")
     ] = None,
+    source_env: Annotated[
+        Optional[str], Field(description="Path to environment file to source before profiling (e.g., setup.sh for development builds)")
+    ] = None,
+    env_vars: Annotated[
+        Optional[dict[str, str]], Field(description="Additional environment variables to set for the profiling run")
+    ] = None,
     timeout_seconds: Annotated[
         Optional[float], Field(description="Timeout in seconds for profiling")
     ] = None,
@@ -157,6 +163,8 @@ async def profile_application(
     - CPU sampling: sample='cputime', sampling_freq=100
     - GPU metrics: device=True, use_amd_smi=True
     - Focused tracing: enable_categories=['rocm_kernel_dispatch', 'rocm_hip_api']
+    - Development build: source_env='/path/to/setup.sh'
+    - Custom environment: env_vars={'LD_LIBRARY_PATH': '/custom/path', 'DEBUG': '1'}
     """
     config = ProfilingConfig(
         command=command,
@@ -187,6 +195,8 @@ async def profile_application(
         gpus=gpus,
         perfetto_annotations=perfetto_annotations,
         config_file=config_file,
+        source_env=source_env,
+        env_vars=env_vars or {},
         timeout_seconds=timeout_seconds,
     )
 
